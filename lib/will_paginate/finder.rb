@@ -223,7 +223,7 @@ module WillPaginate
           if count_options.empty?
             c = count()
           else
-            count(count_options)
+            c = count(count_options)
           end
 
           c
