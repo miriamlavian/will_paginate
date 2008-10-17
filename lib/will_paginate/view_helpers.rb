@@ -117,6 +117,15 @@ module WillPaginate
       renderer.to_html
     end
     
+    # SML: Have different defaults for the iPhone
+    def will_paginate_with_iphone_default_options(collection = nil, options = {})
+      if request.format == :iphone
+        options = {:inner_window => 0, :previous_label   => '&lt; &lt;', :next_label   => '&gt; &gt;'}.merge(options)
+      end
+      will_paginate_without_iphone_default_options(collection, options)
+    end
+    alias_method_chain :will_paginate, :iphone_default_options
+    
     # Wrapper for rendering pagination links at both top and bottom of a block
     # of content.
     # 
@@ -198,11 +207,11 @@ module WillPaginate
 
     # The gap in page links is represented by:
     #
-    #   <span class="gap">&hellip;</span>
+    #   <span class="gap">...</span>
     attr_accessor :gap_marker
     
     def initialize
-      @gap_marker = '<span class="gap">&hellip;</span>'
+      @gap_marker = '<span class="gap">...</span>'
     end
     
     # * +collection+ is a WillPaginate::Collection instance or any other object
@@ -313,6 +322,7 @@ module WillPaginate
         # page links should preserve GET parameters
         stringified_merge @url_params, @template.params if @template.request.get?
         stringified_merge @url_params, @options[:params] if @options[:params]
+        @url_params.delete 'format' # No need to encode the format into the URL.
         
         if complex = param_name.index(/[^\w-]/)
           page_param = (defined?(CGIMethods) ? CGIMethods : ActionController::AbstractRequest).
