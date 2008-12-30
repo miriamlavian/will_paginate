@@ -120,7 +120,7 @@ module WillPaginate
     # SML: Have different defaults for the iPhone
     def will_paginate_with_iphone_default_options(collection = nil, options = {})
       if request.format == :iphone
-        options = {:inner_window => 0, :previous_label   => '&lt; &lt;', :next_label   => '&gt; &gt;'}.merge(options)
+        options = {:inner_window => 0, :outer_window => 0, :previous_label   => '&lt; &lt;', :next_label   => '&gt; &gt;'}.merge(options)
       end
       will_paginate_without_iphone_default_options(collection, options)
     end
