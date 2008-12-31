@@ -216,7 +216,18 @@ module WillPaginate
         end
 
         # we may have to scope ...
-        counter = Proc.new { count(count_options) }
+        counter = Proc.new do
+          # MGC: Edit to workaround #424 pagination issue
+          # calling count with empty {} returns 0 for stream entries
+          c = 0
+          if count_options.empty?
+            c = count()
+          else
+            c = count(count_options)
+          end
+
+          c
+        end
 
         count = if finder.index('find_') == 0 and klass.respond_to?(scoper = finder.sub('find', 'with'))
                   # scope_out adds a 'with_finder' method which acts like with_scope, if it's present
