@@ -13,4 +13,14 @@ Array.class_eval do
       pager.replace self[pager.offset, pager.per_page].to_a
     }
   end
+  
+  def faux_paginate(options = {})
+    raise ArgumentError, "parameter hash expected (got #{options.inspect})" unless Hash === options
+    
+    WillPaginate::Collection.new(
+        options[:page] || 1,
+        options[:per_page] || 30,
+        options[:total_entries] || self.length
+    )
+  end
 end
